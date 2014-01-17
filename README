@@ -24,7 +24,7 @@ dir. See http://nlp.stanford.edu/software/corenlp.shtml
 For word clouds, Andreas Mueller's "word_cloud" package. See
 http://peekaboo-vision.blogspot.no/2012/11/a-wordcloud-in-python.html and the
 source code at https://github.com/amueller/word_cloud.
-Unpack in cloud/word_cloud, build and copy/link with
+Unpack in cloud/word_cloud, build and copy/link lib file with
 ln -s word_cloud/query_integral_image.so
 
 ==============================================================================
@@ -123,18 +123,4 @@ vector.
     $ ./make_clouds.py ../vector/authvecs.npz  img
 
 
-
-*** PROBLEMS ***
-
-Seems some links to publications are not crawled because they have already been visted. E.g. with NTNU-CORE paper
-
-grep url.*10.1.1.310.8990  -B1 result.xml 
-    <author>Lars Bungum</author>
-    <url>http://citeseer.ist.psu.edu/viewdoc/summary;jsessionid=7BF74C453E9D1AB2CA285EFD7750C4EA?doi=10.1.1.310.8990</url>
---
-    <author>Erwin Marsi</author>
-    <url>http://citeseer.ist.psu.edu/viewdoc/summary?doi=10.1.1.310.8990</url>
-
-Missing for Gleb, Bjorn and Andre.
-
-Has to do with "dont_filter" option in request. But how do you use that with Rule or SgmlLink extractor?
+where 'img' is the output directory for png files.
