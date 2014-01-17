@@ -1,0 +1,140 @@
+IDISCAPE
+
+Erwin Marsi
+January 2014
+
+
+
+==============================================================================
+REQUIREMENTS
+==============================================================================
+
+A recent version of Python plus a number of additional packages: scrapy lxml
+pip ipython twisted lxml six requests scikit-learn pil cython unidecode See
+files 'versions' and 'setup_virtualenv.py' to setup a virtual environment
+using the Anaconda Python distro.
+
+Text extraction from PDF files requires 'pdfinfo' and 'pdftotext' command
+line tools from Poppler (or Xpdf). See http://poppler.freedesktop.org. Can be
+installed with Macports.
+
+Annotation requires installation of Stanford CoreNLP tools in the 'annot'
+dir. See http://nlp.stanford.edu/software/corenlp.shtml
+
+For word clouds, Andreas Mueller's "word_cloud" package. See
+http://peekaboo-vision.blogspot.no/2012/11/a-wordcloud-in-python.html and the
+source code at https://github.com/amueller/word_cloud.
+Unpack in cloud/word_cloud, build and copy/link with
+ln -s word_cloud/query_integral_image.so
+
+==============================================================================
+PROCEDURE
+==============================================================================
+
+------------------------------------------------------------------------------
+Step 1: Crawl CiteSeerX for publications by authors
+------------------------------------------------------------------------------
+
+    $ cd idicrawl
+
+File author_names.txt contains names of IDI scientific members as they appaer
+on IDI webpage.
+
+    $ scrapy crawl CiteSeerX
+
+Crawl result appear in something like CiteSeerX_2014-01-16T12-02-10.xml;
+rename to result.xml.
+
+    $ xmllint --format CiteSeerX_2014-01-16T12-02-10.xml >result.xml
+
+
+------------------------------------------------------------------------------
+STEP 2: Download full-text publications
+------------------------------------------------------------------------------
+
+
+Download full-text PDF files following link on CiteSeerX page
+
+    $ ./download_fulltext.py  ../idicrawl/result.xml docs |tee download.log
+
+where result.xml is the output from the CiteSeerX crawl and docs is the
+directory for PDF files.
+
+Documents are stored under their DOI. If a {DOI}.pdf already exists inthe
+output dir, downloading is skipped.
+
+
+------------------------------------------------------------------------------
+STEP 3: Extract text from PDFs
+------------------------------------------------------------------------------
+
+Assumes command line tools 'pdfinfo' and 'pdftotext' are on shell PATH.
+
+Files with more than 50 pages are skipped.
+
+    $ ./extract_text.py "../download/docs/*.pdf" text
+
+where "../download/docs/*.pdf" is a quoted glob pattern and 'text' is an
+existing output dir.
+
+
+------------------------------------------------------------------------------
+STEP 4: Annotation
+------------------------------------------------------------------------------
+
+Tokenize, POS tag and lemmatize with Stanford CoreNLP tools. This requires
+lots of memory (Java heap size is 6G) so try to free as much memory as
+possible.
+
+    $ annotate.sh
+    
+Output goes to files the 'lemtag' dir. 
+
+Extract lemma (and optionally POS tag) from XML output by 
+
+    $ ./lemtag.py "xml/*.xml" lemtag
+
+where "xml/*.xml" is a quoted glob pattern and 'lemtag' is an existing 
+output dir. 
+
+
+------------------------------------------------------------------------------
+STEP 5: Vectorize
+------------------------------------------------------------------------------
+
+Create document vectors by vectorizing document
+
+    $ ./make_doc_vectors.py  "../annot/lemtag/*.lemtag" docvecs
+    
+Output goes 
+ 
+Create author vectors by summing the document vectors of their publications
+
+    $ ./make_author_vecs.py  ../idicrawl/result.xml docvecs.npz authvecs.npz
+    
+
+------------------------------------------------------------------------------
+STEP 6: Make word clouds
+------------------------------------------------------------------------------
+
+Make word clouds consisting of 200 most frequent words from the author
+vector.
+    
+    $ ./make_clouds.py ../vector/authvecs.npz  img
+
+
+
+*** PROBLEMS ***
+
+Seems some links to publications are not crawled because they have already been visted. E.g. with NTNU-CORE paper
+
+grep url.*10.1.1.310.8990  -B1 result.xml 
+    <author>Lars Bungum</author>
+    <url>http://citeseer.ist.psu.edu/viewdoc/summary;jsessionid=7BF74C453E9D1AB2CA285EFD7750C4EA?doi=10.1.1.310.8990</url>
+--
+    <author>Erwin Marsi</author>
+    <url>http://citeseer.ist.psu.edu/viewdoc/summary?doi=10.1.1.310.8990</url>
+
+Missing for Gleb, Bjorn and Andre.
+
+Has to do with "dont_filter" option in request. But how do you use that with Rule or SgmlLink extractor?
