@@ -7,7 +7,7 @@ from twisted.internet import reactor
 from scrapy.crawler import Crawler
 from scrapy import log, signals
 from scrapy.utils.project import get_project_settings
-from idicrawl.spiders.citeseerx import CiteSeerXSpider
+from crawl_citeseer.spiders.citeseerx import CiteSeerXSpider
 
 spider = CiteSeerXSpider()
 settings = get_project_settings()

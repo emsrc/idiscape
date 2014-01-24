@@ -11,7 +11,7 @@ from scrapy import log
 
 import unidecode
 
-from idicrawl.items import IdicrawlItem
+from crawl_citeseer.items import CiteSeerXItem
 
 
 class CiteSeerXSpider(CrawlSpider):
@@ -48,7 +48,7 @@ class CiteSeerXSpider(CrawlSpider):
 
     def parse_result(self, response):
         sel = Selector(response)
-        item = IdicrawlItem()
+        item = CiteSeerXItem()
         item["url"] = response.url
         item["author"] = response.meta["author"]
         abstract = sel.xpath('//div[@id="abstract"]/p/text()').extract()
