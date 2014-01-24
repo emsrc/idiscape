@@ -11,6 +11,12 @@ _*
 *.log
 *.so
 *.npz
+*.db
+*.jpg
+*.gif
+
+
+
 
 
 
