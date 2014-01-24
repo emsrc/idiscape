@@ -1,10 +1,7 @@
 import codecs
-import re
-import unicodedata
 import urlparse
 
-from scrapy.contrib.spiders import CrawlSpider, Rule
-from scrapy.contrib.linkextractors.sgml import SgmlLinkExtractor
+from scrapy.contrib.spiders import CrawlSpider
 from scrapy.selector import Selector
 from scrapy.http import Request
 from scrapy import log
