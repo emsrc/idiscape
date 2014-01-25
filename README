@@ -31,8 +31,23 @@ ln -s word_cloud/query_integral_image.so
 PROCEDURE
 ==============================================================================
 
+
 ------------------------------------------------------------------------------
-Step 1: Crawl CiteSeerX for publications by authors
+Step 1: Crawl IDI website
+------------------------------------------------------------------------------
+
+    $ cd crawl_idi
+
+Crawl http://www.idi.ntnu.no/ for info on scientific staff
+    
+    $ scrapy crawl IDISpider -o idi_crawl.db
+    
+Pretty print XML (optional)
+    
+    $ xmllint --format --output IDISpider.xml IDISpider.xml
+    
+------------------------------------------------------------------------------
+Step 2: Crawl CiteSeerX for publications by authors
 ------------------------------------------------------------------------------
 
     $ cd crawl_citeseer
@@ -49,7 +64,7 @@ rename to result.xml.
 
 
 ------------------------------------------------------------------------------
-STEP 2: Download full-text publications
+STEP 3: Download full-text publications
 ------------------------------------------------------------------------------
 
 
@@ -65,7 +80,7 @@ output dir, downloading is skipped.
 
 
 ------------------------------------------------------------------------------
-STEP 3: Extract text from PDFs
+STEP 4: Extract text from PDFs
 ------------------------------------------------------------------------------
 
 Assumes command line tools 'pdfinfo' and 'pdftotext' are on shell PATH.
@@ -79,7 +94,7 @@ existing output dir.
 
 
 ------------------------------------------------------------------------------
-STEP 4: Annotation
+STEP 5: Annotation
 ------------------------------------------------------------------------------
 
 Tokenize, POS tag and lemmatize with Stanford CoreNLP tools. This requires
@@ -99,7 +114,7 @@ output dir.
 
 
 ------------------------------------------------------------------------------
-STEP 5: Vectorize
+STEP 6: Vectorize
 ------------------------------------------------------------------------------
 
 Create document vectors by vectorizing document
@@ -114,7 +129,7 @@ Create author vectors by summing the document vectors of their publications
     
 
 ------------------------------------------------------------------------------
-STEP 6: Make word clouds
+STEP 7: Make word clouds
 ------------------------------------------------------------------------------
 
 Make word clouds consisting of 200 most frequent words from the author

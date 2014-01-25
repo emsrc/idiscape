@@ -17,14 +17,16 @@ ITEM_PIPELINES = {
 
 IMG_DIR = "img"
 
+FEED_FORMAT = "xml"
+FEED_URI  = "%(name)s.xml"
 
 FEED_EXPORTERS = {
     'sqlite': 'crawl_idi.pipelines.SqliteItemExporter',
 }
 
-FEED_URI  = "%(name)s_%(time)s.db"
-FEED_FORMAT = "sqlite"
-
+# Use this for export to Sqlite db
+# FEED_FORMAT = "sqlite"
+# FEED_URI  = "%(name)s_%(time)s.db"
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 USER_AGENT = 'crawl_idi (emars@idi.ntnu.no)'
