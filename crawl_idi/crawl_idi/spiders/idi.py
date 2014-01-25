@@ -17,7 +17,7 @@ class IDISpider(CrawlSpider):
     allowed_domains = ['www.idi.ntnu.no']  
     start_urls = [
             "http://www.idi.ntnu.no/people/faculty.php",
-            "http://www.dmoz.org/Computers/Programming/Languages/Python/Resources/",
+            "http://www.idi.ntnu.no/people/researchers.php",
             "http://www.idi.ntnu.no/people/phd_students.php"]
     domain = "http://www.idi.ntnu.no"
     
