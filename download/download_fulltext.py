@@ -19,7 +19,7 @@ import subprocess
 import urlparse
 
 
-def download_fulltext(crawl_fname, out_dir):
+def download_fulltext(crawl_fname, out_dir, timeout=60):
     tree = etree.parse(crawl_fname)
     exist = succes = fail = 0
     
@@ -44,10 +44,12 @@ def download_fulltext(crawl_fname, out_dir):
         for link in item.xpath("download_links/value/text()"):
             parse_result = urlparse.urlparse(link)
             if ( parse_result.scheme == "http" and 
-                 parse_result.path.endswith(".pdf")):
+                 parse_result.path[-4:].lower() == ".pdf"):
                 log.debug("Trying download from {}".format(link))
                 try:
-                    result = requests.get(link)
+                    # timeout seconds to establish connection and another
+                    # timeout seconds to download - otherwise 
+                    result = requests.get(link, timeout=timeout)
                 except requests.RequestException as inst:
                     log.debug(inst)
                     continue
