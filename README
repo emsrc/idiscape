@@ -37,10 +37,14 @@ Step 1: Crawl IDI website
 ------------------------------------------------------------------------------
 
     $ cd crawl_idi
-
-Crawl http://www.idi.ntnu.no/ for info on scientific staff
     
-    $ scrapy crawl IDISpider -o idi_crawl.db
+Delete old crawl result
+
+    $ rm IDISpider.xml
+    
+Crawl http://www.idi.ntnu.no/ for info on scientific staff
+
+    $ scrapy crawl IDISpider |tee idi_crawl.log
     
 Pretty print XML (optional)
     
@@ -52,15 +56,17 @@ Step 2: Crawl CiteSeerX for publications by authors
 
     $ cd crawl_citeseer
 
-File author_names.txt contains names of IDI scientific members as they appaer
-on IDI webpage.
+Delete old crawl result
 
-    $ scrapy crawl CiteSeerX
+    $ rm CiteSeerXSpider.xml
 
-Crawl result appear in something like CiteSeerX_2014-01-16T12-02-10.xml;
-rename to result.xml.
+Crawl CiteseerX 
 
-    $ xmllint --format CiteSeerX_2014-01-16T12-02-10.xml >result.xml
+    $ scrapy crawl CiteSeerXSpider |tee siteseerx_crawl.log
+
+Pretty print XML (optional)
+
+    $ xmllint --format CiteSeerXSpider.xml >CiteSeerXSpider.xml
 
 
 ------------------------------------------------------------------------------
