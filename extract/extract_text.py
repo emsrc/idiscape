@@ -7,6 +7,7 @@ Extract text from PDF files, skipping
 - converted text consisting mainly of garbage
 - converted text not containing the author name
 
+Also strips illegal XML chars.
 Assumes command line tools 'pdfinfo' and 'pdftotext' are on shell PATH.
 
 Usage:

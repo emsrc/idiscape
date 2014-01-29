@@ -5,7 +5,7 @@ Create author vectors by summing the document vectors of their publications
 
 Usage:
 
- ./make_author_vecs.py  ../idicrawl/result.xml docvecs.npz authvecs.npz
+ ./make_author_vecs.py  ../crawl_idi/IDISpider.xml docvecs.npz authvecs.npz
 """
 
 import logging as log
@@ -35,9 +35,14 @@ def make_author_vectors(crawl_fname, doc_vec_fname, auth_vec_fname):
     # Create mapping from authors to row number (=author vector)
     auth2n = dict((a,i) for i,a in enumerate(authors))
     
+    ## author to group mapping
+    ##auth2group = {}
+    
     # Fill author vectors by adding doc vectors 
     for item in tree.findall("//item"):
         author = item.find("author").text
+        ##group = item.find("group")
+        ##auth2group[author] = group
         url = item.find("url").text
         query = urlparse.urlparse(url).query
         doi = urlparse.parse_qs(query)["doi"][0]
@@ -50,11 +55,15 @@ def make_author_vectors(crawl_fname, doc_vec_fname, auth_vec_fname):
                 doi, author))
             
     auth_vecs = auth_vecs.tocsr()
+    
+    ##group_labels = [auth2group[auth] for auth in authors]
            
     np.savez(auth_vec_fname, 
              vectorizer=docs["vectorizer"],
              vectors=auth_vecs,
-             labels=authors) 
+             author_labels=authors,
+             ##group_labels=group_labels
+             ) 
 
     
     

@@ -116,7 +116,7 @@ possible.
 
     $ annotate.sh
     
-Output goes to files the 'lemtag' dir. 
+Output goes to files the 'xml' dir. 
 
 Extract lemma (and optionally POS tag) from XML output by 
 
