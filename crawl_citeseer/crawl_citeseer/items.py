@@ -5,7 +5,7 @@
 
 from scrapy.item import Item, Field
 
-class IdicrawlItem(Item):
+class CiteSeerXItem(Item):
     url = Field()
     author = Field()
     bibtex = Field()

@@ -5,6 +5,10 @@ Generate word clouds for all authors
 
 Usage:
 
+    $ ./make_clouds.py ../vector/authvecs.npz  img
+
+where 'img' is the output directory for png files.
+
 """
 
 import numpy as np
@@ -17,7 +21,7 @@ from wordcloud import make_wordcloud
 
 def make_clouds(auth_vec_fname, out_dir="img", max_words=200):
     arch = np.load(auth_vec_fname)
-    authors = arch["labels"]
+    authors = arch["author_labels"]
     vectorizer = arch["vectorizer"][()]
     vectors = arch["vectors"][()]
     

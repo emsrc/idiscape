@@ -31,25 +31,46 @@ ln -s word_cloud/query_integral_image.so
 PROCEDURE
 ==============================================================================
 
-------------------------------------------------------------------------------
-Step 1: Crawl CiteSeerX for publications by authors
-------------------------------------------------------------------------------
-
-    $ cd idicrawl
-
-File author_names.txt contains names of IDI scientific members as they appaer
-on IDI webpage.
-
-    $ scrapy crawl CiteSeerX
-
-Crawl result appear in something like CiteSeerX_2014-01-16T12-02-10.xml;
-rename to result.xml.
-
-    $ xmllint --format CiteSeerX_2014-01-16T12-02-10.xml >result.xml
-
 
 ------------------------------------------------------------------------------
-STEP 2: Download full-text publications
+Step 1: Crawl IDI website
+------------------------------------------------------------------------------
+
+    $ cd crawl_idi
+    
+Delete old crawl result
+
+    $ rm IDISpider.xml
+    
+Crawl http://www.idi.ntnu.no/ for info on scientific staff
+
+    $ scrapy crawl IDISpider |tee idi_crawl.log
+    
+Pretty print XML (optional)
+    
+    $ xmllint --format --output IDISpider.xml IDISpider.xml
+    
+------------------------------------------------------------------------------
+Step 2: Crawl CiteSeerX for publications by authors
+------------------------------------------------------------------------------
+
+    $ cd crawl_citeseer
+
+Delete old crawl result
+
+    $ rm CiteSeerXSpider.xml
+
+Crawl CiteseerX 
+
+    $ scrapy crawl CiteSeerXSpider |tee siteseerx_crawl.log
+
+Pretty print XML (optional)
+
+    $ xmllint --format CiteSeerXSpider.xml >CiteSeerXSpider.xml
+
+
+------------------------------------------------------------------------------
+STEP 3: Download full-text publications
 ------------------------------------------------------------------------------
 
 
@@ -63,23 +84,30 @@ directory for PDF files.
 Documents are stored under their DOI. If a {DOI}.pdf already exists inthe
 output dir, downloading is skipped.
 
+Known issue: script sometimes hangs for no apperant reason; if so, restart
+(it skips PDFs alreay downloaded).
+
 
 ------------------------------------------------------------------------------
-STEP 3: Extract text from PDFs
+STEP 4: Extract text from PDFs
 ------------------------------------------------------------------------------
+
+Extract text from PDF files, skipping
+- PDF files with more than 50 pages
+- converted text consisting mainly of garbage
+- converted text not containing the author name
 
 Assumes command line tools 'pdfinfo' and 'pdftotext' are on shell PATH.
 
-Files with more than 50 pages are skipped.
+    $ ./extract_text.py ../crawl_citeseer/CiteSeerXSpider.xml ../download/docs text
 
-    $ ./extract_text.py "../download/docs/*.pdf" text
-
-where "../download/docs/*.pdf" is a quoted glob pattern and 'text' is an
-existing output dir.
+where 'CiteSeerXSpider.xml' is the result of crawling CiteSeerX,
+'docs' is the dir containing PDF files and
+'text' is an existing dir for writing txt files
 
 
 ------------------------------------------------------------------------------
-STEP 4: Annotation
+STEP 5: Annotation
 ------------------------------------------------------------------------------
 
 Tokenize, POS tag and lemmatize with Stanford CoreNLP tools. This requires
@@ -88,7 +116,7 @@ possible.
 
     $ annotate.sh
     
-Output goes to files the 'lemtag' dir. 
+Output goes to files the 'xml' dir. 
 
 Extract lemma (and optionally POS tag) from XML output by 
 
@@ -99,7 +127,7 @@ output dir.
 
 
 ------------------------------------------------------------------------------
-STEP 5: Vectorize
+STEP 6: Vectorize
 ------------------------------------------------------------------------------
 
 Create document vectors by vectorizing document
@@ -114,7 +142,7 @@ Create author vectors by summing the document vectors of their publications
     
 
 ------------------------------------------------------------------------------
-STEP 6: Make word clouds
+STEP 7: Make word clouds
 ------------------------------------------------------------------------------
 
 Make word clouds consisting of 200 most frequent words from the author
