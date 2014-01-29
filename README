@@ -84,19 +84,26 @@ directory for PDF files.
 Documents are stored under their DOI. If a {DOI}.pdf already exists inthe
 output dir, downloading is skipped.
 
+Known issue: script sometimes hangs for no apperant reason; if so, restart
+(it skips PDFs alreay downloaded).
+
 
 ------------------------------------------------------------------------------
 STEP 4: Extract text from PDFs
 ------------------------------------------------------------------------------
 
+Extract text from PDF files, skipping
+- PDF files with more than 50 pages
+- converted text consisting mainly of garbage
+- converted text not containing the author name
+
 Assumes command line tools 'pdfinfo' and 'pdftotext' are on shell PATH.
 
-Files with more than 50 pages are skipped.
+    $ ./extract_text.py ../crawl_citeseer/CiteSeerXSpider.xml ../download/docs text
 
-    $ ./extract_text.py "../download/docs/*.pdf" text
-
-where "../download/docs/*.pdf" is a quoted glob pattern and 'text' is an
-existing output dir.
+where 'CiteSeerXSpider.xml' is the result of crawling CiteSeerX,
+'docs' is the dir containing PDF files and
+'text' is an existing dir for writing txt files
 
 
 ------------------------------------------------------------------------------
