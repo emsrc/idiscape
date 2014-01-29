@@ -26,9 +26,12 @@ from os import remove
 from codecs import open
 from lxml import etree
 from urlparse import parse_qs, urlparse
+from tempfile import NamedTemporaryFile
 import re
 
 from unidecode import unidecode
+
+remove_re = re.compile(u'[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F]')
 
 
 
@@ -36,6 +39,7 @@ def extract_text(crawl_fname, pdf_dir, txt_dir, max_pages=50):
           
     tree = etree.parse(crawl_fname)
     author_patterns = {}
+    tmp_fname = NamedTemporaryFile().name
     
     for item in tree.findall("//item"):
         author = item.find("author").text
@@ -56,13 +60,10 @@ def extract_text(crawl_fname, pdf_dir, txt_dir, max_pages=50):
             pdf_fname, n))
             continue        
         
-        txt_fname = join(txt_dir, doi + ".txt")
-        
-        text =  pdf_to_text(pdf_fname, txt_fname)
+        text =  pdf_to_text(pdf_fname, tmp_fname)
         
         if not text:
             log.error("conversion of {} to text failed".format(pdf_fname))
-            remove(txt_fname)  
             continue
         
         if is_garbage(text):
@@ -71,31 +72,41 @@ def extract_text(crawl_fname, pdf_dir, txt_dir, max_pages=50):
             # files with mostly non-ascii chars (heap out of memory). Hence
             # these cases need to be filtered out.
             log.warn("skipping {} because text output is garbage".format(pdf_fname))
-            remove(txt_fname)
             continue
            
         # If a name contains non-ascii chars, e.g. "Pinar Õztürk", don't bother
         # looking for it in the text because pdftotext conversion most likely
         # messed up the name beyond recognition
-        if author != unicode(unidecode(author)):
+        if author != unicode(unidecode(unicode(author))):
             log.info(u"skipping author name check for non-ascii name " + author)
-            continue      
-           
-        # Filter out documents that do not contain some variant of the author
-        # name. This removes roughy half of the documents, mainly because of
-        # a number of highly ambiguous names.
-        author_pat = author_patterns.setdefault(author, 
-                                                compile_author_pattern(author))
-        log.debug(u"{}: {} --> {}".format(pdf_fname, author, author_pat.pattern))
-        
-        limit = min(len(text)/2, 2500)
-        result = author_pat.search(text[:limit])
-        
-        if result:
-            log.debug(u"found " +  result.group())
         else:
-            log.warn("skipping {} because author name not found".format(pdf_fname))
-            remove(txt_fname)
+            # Filter out documents that do not contain some variant of the author
+            # name. This removes roughy half of the documents, mainly because of
+            # a number of highly ambiguous names.
+            author_pat = author_patterns.setdefault(author, 
+                                                    compile_author_pattern(author))
+            log.debug(u"{}: {} --> {}".format(pdf_fname, author, author_pat.pattern))
+            
+            limit = min(len(text)/2, 2500)
+            result = author_pat.search(text[:limit])
+            
+            if result:
+                log.debug(u"found " +  result.group())
+            else:
+                log.warn("skipping {} because author name not found".format(pdf_fname))
+                continue    
+            
+        # Delete illegal XML chars, which break XML serialization in Stanford CoreNLP 
+        text, n = remove_re.subn('', text)
+        if n:
+            log.debug("removed {} illegal XML chars".format(n))
+            
+        txt_fname = join(txt_dir, doi + ".txt")   
+        log.debug("saving text to " + txt_fname)
+        with open(txt_fname, "w", encoding="utf-8") as outf:
+            outf.write(text)
+            
+            
                     
         
         
