@@ -138,7 +138,7 @@ Output goes
  
 Create author vectors by summing the document vectors of their publications
 
-    $ ./make_author_vecs.py  ../idicrawl/result.xml docvecs.npz authvecs.npz
+    $ ./make_author_vecs.py  ../crawl_citeseer/CiteSeerXSpider.xml docvecs.npz authvecs.npz
     
 
 ------------------------------------------------------------------------------
