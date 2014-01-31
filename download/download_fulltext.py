@@ -5,7 +5,7 @@ Download full-text PDF files following link on CiteSeerX page
 
 Usage:
 
-$ ./download_fulltext.py  ../idicrawl/result.xml docs
+$ ./download_fulltext.py ../crawl_citeseer/CiteSeerXSpider.xml docs
 
 where results.xml is the result from the CiteSeerX crawl and 
 docs is the directory for PDF files 

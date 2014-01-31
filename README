@@ -1,154 +1,60 @@
 IDISCAPE
 
 Erwin Marsi
+emars@idi.ntnu.no
 January 2014
 
+
+Crawls IDI webpages for names of scientific staff. Then searches
+CiteSeerX for their publications, downloads PDF files, preprocesses
+them (part-of-speech tagging and lemmatization, filtering), and turns
+them into vectors using a bag-of-ngrams approach. Author vectors are
+created by summing the vectors of their publications. Finally word
+clouds for every author are constructed from the 200 most frequent
+ngrams in their publications.
 
 
 ==============================================================================
 REQUIREMENTS
 ==============================================================================
 
-A recent version of Python plus a number of additional packages: scrapy lxml
-pip ipython twisted lxml six requests scikit-learn pil cython unidecode See
-files 'versions' and 'setup_virtualenv.py' to setup a virtual environment
-using the Anaconda Python distro.
+A recent version of Python plus a number of additional packages:
+scrapy lxml pip ipython twisted lxml six requests scikit-learn pil
+cython unidecode. See files 'versions' and 'setup_virtualenv.py' to
+setup a virtual environment using the Anaconda Python distro.
 
-Text extraction from PDF files requires 'pdfinfo' and 'pdftotext' command
-line tools from Poppler (or Xpdf). See http://poppler.freedesktop.org. Can be
-installed with Macports.
+Text extraction from PDF files requires 'pdfinfo' and 'pdftotext'
+command line tools from Poppler (or Xpdf). See
+http://poppler.freedesktop.org. Can be installed with Macports.
 
-Annotation requires installation of Stanford CoreNLP tools in the 'annot'
-dir. See http://nlp.stanford.edu/software/corenlp.shtml
+Annotation requires installation of Stanford CoreNLP tools in the
+'annot' dir. See http://nlp.stanford.edu/software/corenlp.shtml. For
+this, you need a recent version of the Java SE Runtime Environment.
 
 For word clouds, Andreas Mueller's "word_cloud" package. See
-http://peekaboo-vision.blogspot.no/2012/11/a-wordcloud-in-python.html and the
-source code at https://github.com/amueller/word_cloud.
-Unpack in cloud/word_cloud, build and copy/link lib file with
-ln -s word_cloud/query_integral_image.so
+http://peekaboo-vision.blogspot.no/2012/11/a-wordcloud-in-python.html
+and the source code at https://github.com/amueller/word_cloud.  Unpack
+in cloud/word_cloud, build and copy/link lib file with 'ln -s
+word_cloud/query_integral_image.so'.
+
+XMl formatting requires xmllint.
+
+Tested on Mac OS X (10.9.1). Will probably run on any *nix platform
+with a bit of tweaking.
+
+Free diskspace required: <5GB
+
 
 ==============================================================================
 PROCEDURE
 ==============================================================================
 
+Quick start:
 
-------------------------------------------------------------------------------
-Step 1: Crawl IDI website
-------------------------------------------------------------------------------
+      $ cd idiscape 
+      $ make
 
-    $ cd crawl_idi
-    
-Delete old crawl result
+There is no proper documentation, but the subsequent steps in the
+processing pipeline are (somewhat) decscribed in the Makefile.  Most
+of the Pyhon scripts also have a doc string.
 
-    $ rm IDISpider.xml
-    
-Crawl http://www.idi.ntnu.no/ for info on scientific staff
-
-    $ scrapy crawl IDISpider |tee idi_crawl.log
-    
-Pretty print XML (optional)
-    
-    $ xmllint --format --output IDISpider.xml IDISpider.xml
-    
-------------------------------------------------------------------------------
-Step 2: Crawl CiteSeerX for publications by authors
-------------------------------------------------------------------------------
-
-    $ cd crawl_citeseer
-
-Delete old crawl result
-
-    $ rm CiteSeerXSpider.xml
-
-Crawl CiteseerX 
-
-    $ scrapy crawl CiteSeerXSpider |tee siteseerx_crawl.log
-
-Pretty print XML (optional)
-
-    $ xmllint --format CiteSeerXSpider.xml >CiteSeerXSpider.xml
-
-
-------------------------------------------------------------------------------
-STEP 3: Download full-text publications
-------------------------------------------------------------------------------
-
-
-Download full-text PDF files following link on CiteSeerX page
-
-    $ ./download_fulltext.py  ../idicrawl/result.xml docs |tee download.log
-
-where result.xml is the output from the CiteSeerX crawl and docs is the
-directory for PDF files.
-
-Documents are stored under their DOI. If a {DOI}.pdf already exists inthe
-output dir, downloading is skipped.
-
-Known issue: script sometimes hangs for no apperant reason; if so, restart
-(it skips PDFs alreay downloaded).
-
-
-------------------------------------------------------------------------------
-STEP 4: Extract text from PDFs
-------------------------------------------------------------------------------
-
-Extract text from PDF files, skipping
-- PDF files with more than 50 pages
-- converted text consisting mainly of garbage
-- converted text not containing the author name
-
-Assumes command line tools 'pdfinfo' and 'pdftotext' are on shell PATH.
-
-    $ ./extract_text.py ../crawl_citeseer/CiteSeerXSpider.xml ../download/docs text
-
-where 'CiteSeerXSpider.xml' is the result of crawling CiteSeerX,
-'docs' is the dir containing PDF files and
-'text' is an existing dir for writing txt files
-
-
-------------------------------------------------------------------------------
-STEP 5: Annotation
-------------------------------------------------------------------------------
-
-Tokenize, POS tag and lemmatize with Stanford CoreNLP tools. This requires
-lots of memory (Java heap size is 6G) so try to free as much memory as
-possible.
-
-    $ annotate.sh
-    
-Output goes to files the 'xml' dir. 
-
-Extract lemma (and optionally POS tag) from XML output by 
-
-    $ ./lemtag.py "xml/*.xml" lemtag
-
-where "xml/*.xml" is a quoted glob pattern and 'lemtag' is an existing 
-output dir. 
-
-
-------------------------------------------------------------------------------
-STEP 6: Vectorize
-------------------------------------------------------------------------------
-
-Create document vectors by vectorizing document
-
-    $ ./make_doc_vectors.py  "../annot/lemtag/*.lemtag" docvecs
-    
-Output goes 
- 
-Create author vectors by summing the document vectors of their publications
-
-    $ ./make_author_vecs.py  ../idicrawl/result.xml docvecs.npz authvecs.npz
-    
-
-------------------------------------------------------------------------------
-STEP 7: Make word clouds
-------------------------------------------------------------------------------
-
-Make word clouds consisting of 200 most frequent words from the author
-vector.
-    
-    $ ./make_clouds.py ../vector/authvecs.npz  img
-
-
-where 'img' is the output directory for png files.
