@@ -44,7 +44,8 @@ def make_clouds(auth_vec_fname, out_dir="img", max_words=200):
         log.debug(u"writing " + out_fname)
         
         make_wordcloud(words, counts, out_fname,
-        font_path="/usr/local/texlive/2012/texmf-dist/fonts/truetype/public/droid/DroidSansMono.ttf",
+        #font_path="/usr/local/texlive/2012/texmf-dist/fonts/truetype/public/droid/DroidSansMono.ttf",
+        font_path="/usr/local/texlive/2012/texmf-dist/fonts/truetype/public/opensans/OpenSans-Regular.ttf",
         width=1000, height=600, show_img=False)
 
     

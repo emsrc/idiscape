@@ -144,9 +144,12 @@ def make_wordcloud(words, counts, fname, font_path=None, width=400, height=200,
         integral[x:, y:] = partial_integral
 
     # redraw in color
-    img = Image.new("RGB", (width, height))
+    img = Image.new("RGB", (width, height), color=(255,255,255,0))
     draw = ImageDraw.Draw(img)
     everything = zip(words, font_sizes, positions, orientations)
+    max_font = float(max(font_sizes))
+    hue_width = 120
+    hue_start = random.randint(0, 360 - hue_width)
     for word, font_size, position, orientation in everything:
         font = ImageFont.truetype(font_path, font_size)
         # transpose font optionally
@@ -154,7 +157,12 @@ def make_wordcloud(words, counts, fname, font_path=None, width=400, height=200,
                                                    orientation=orientation)
         draw.setfont(transposed_font)
         draw.text((position[1], position[0]), word,
-                  fill="hsl(%d" % random.randint(0, 255) + ", 80%, 50%)")
+                  fill="hsl(%d, %d%%, %d%%)" % (
+                      # hue in random band of fixed width between 0 and 360 
+                      random.randint(hue_start, hue_start + hue_width),
+                      90,
+                      # dark for small font and light for large fonts
+                      20 + (font_size/max_font) * 35))
     if show_img:
         img.show()
     img.save(fname)
