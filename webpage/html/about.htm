@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-	<title>About IDISCAPE</title>
+	<title>About IDIScape</title>
 	<meta name="description" content="Explanation of how IDIScape constructs word clouds">
 	<link href="minimal.css" rel="stylesheet">
 </head>
@@ -16,9 +16,14 @@
         
         <div class="row">
         
-            <h2>How does this work?</h2>
+            <h2>What is this?</h2>
+	    
+	    <p>Word clouds for (most) members of IDI's scientfic staff. Just click on the faces at the left to see the corresponding word cloud!</p>
 
+            <h2>How does this work?</h2>
+	    
             <p>
+	    Word clouds were built off-line as follows: 
             <ol>
                 <li>Info about the scientific staff (name, position, group and picture) is scraped from the IDI webpages for <a href="http://www.idi.ntnu.no/people/faculty.php">faculty</a>, <a href="http://www.idi.ntnu.no/people/phd_students.php">PhD candidates</a> and <a href="http://www.idi.ntnu.no/people/researchers.php">researchers</a> using <a href="http://scrapy.org">Scrapy</a>.</li>
                 <li><a href="http://citeseer.ist.psu.edu/index">CiteSeerX</a> is searched for publications by any of these authors, scraping their download links from the search results. For example, here are <a href="http://citeseer.ist.psu.edu/search?q=author%3A%28Erwin+Marsi%29&submit=Search&sort=rlv&t=doc">mine</a></li>
@@ -60,15 +65,15 @@
             
             <h2>Does this scale?</h2>
             
-            <p>To some extent. It takes under two hours on my rather old MacBook (2.66 GHz Intel Core 2 Due, 8GB). Initially about 2500 publications are downloaded. In the end, about a 1000 document vectors remain. Downloading seems to be the slowest step.</p>
+            <p>To some extent. It takes under two hours on my rather old MacBook (2.66 GHz Intel Core 2 Due, 8GB). Initially about 2500 publications are downloaded. In the end, about a 1000 document vectors remain. Downloading seems to be the slowest step, followed by vectorisation.</p>
 
             <h2>Where is the source code?</h2>
 
-            <p>Please note that this is just a proof on concept implementation. In other words, it is essentially a bunch of command line tools, Python scripts and a lousy Make file  :-) That said, you can find the code on <a href="https://github.com/emsrc/idiscape">Github</a>. I'm sure most things can be improved.</p>
+            <p>Please note that this is just a proof on concept implementation. In other words, it is essentially a bunch of command line tools, Python scripts and a lousy Make file  :-) That said, you can find the code on <a href="https://github.com/emsrc/idiscape">Github</a>. I'm sure there are bugs and most things can be improved. No documenation, I'm afraid, but feel free to ask <a href="http://www.idi.ntnu.no/people/emarsi">me</a>.</p>
             
             <h2>Where is the data?</h2>
             
-            <p>Document and author vectors are available <a href="">here</a> if anyone is interested. </p>
+            <p>Document and author vectors are available here: <a href="idiscape-data-v1.tar.bz2">idiscape-data-v1.tar.bz2</a> (6.9M). Sparse matrices are in <a href="http://math.nist.gov/MatrixMarket/formats.html">Matrix Market format</a>. Feature names and vector labels are in utf-8 text files. No documenation, but you can always ask <a href="http://www.idi.ntnu.no/people/emarsi">me</a>. Please let me know if you (plan to) use this for something.</p>
             
             <h2>Can I use my own word cloud image?</h2>
             

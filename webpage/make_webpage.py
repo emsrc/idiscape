@@ -29,7 +29,7 @@ menu_template = u"""
 </header>
 <div class="row">	
 <p>
-<a href="about.html" target="cloud">About IDIScape</a>
+<a href="about.htm" target="cloud">About IDIScape</a>
 </p>
 </div>
 <div class="row">

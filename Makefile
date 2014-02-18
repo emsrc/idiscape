@@ -171,7 +171,8 @@ vector:
 		|tee $(VECTOR_LOG)
 
 clean_vector:
-	rm -vf $(DOC_VECS) $(AUTH_VECS) $(VECTOR_LOG)
+	rm -vf $(DOC_VECS) $(AUTH_VECS) $(VECTOR_LOG) \
+		$(VECTOR_DIR)\*.mtx $(VECTOR_DIR)\*.txt
 
 
 #------------------------------------------------------------------------------
@@ -216,3 +217,17 @@ webpage:
 		
 clean_webpage:
 	rm -vrf $(BUILD_DIR)
+	
+	
+
+#------------------------------------------------------------------------------
+# Pack data
+#------------------------------------------------------------------------------
+
+# Pack matrices, labels and features. Move tarball to webpage. 
+
+TARBALL=idiscape-data-v1.tar.bz2
+
+pack:
+	tar cvyf $(TARBALL) $(VECTOR_DIR)/*.mtx $(VECTOR_DIR)/*.txt
+	mv -v $(TARBALL) $(BUILD_DIR)

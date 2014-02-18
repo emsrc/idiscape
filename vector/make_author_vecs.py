@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 
 """
-Create author vectors by summing the document vectors of their publications
+Create author vectors by summing the document vectors of their publications.
+Save matrix in Numpy and Marix Market format.
+Save labels as text file (features are the same as for document vectors).
 
 Usage:
 
@@ -11,9 +13,13 @@ Usage:
 import logging as log
 from lxml import etree
 import urlparse
+from os.path import splitext
+from codecs import open
 
 import numpy as np
 import scipy.sparse as sp
+from scipy.io import mmwrite
+
 
 def make_author_vectors(crawl_fname, doc_vec_fname, auth_vec_fname):
     docs = np.load(doc_vec_fname)
@@ -58,18 +64,27 @@ def make_author_vectors(crawl_fname, doc_vec_fname, auth_vec_fname):
     
     ##group_labels = [auth2group[auth] for auth in authors]
            
+    log.info("saving matrix in Numpy format to " + auth_vec_fname)
     np.savez(auth_vec_fname, 
              vectorizer=docs["vectorizer"],
              vectors=auth_vecs,
              author_labels=authors,
              ##group_labels=group_labels
              ) 
-
     
+    base_fname = splitext(auth_vec_fname)[0]
+    
+    mm_fname = base_fname + ".mtx"
+    log.info("saving matrix in Matrix Market format to " + mm_fname)
+    mmwrite(mm_fname, auth_vecs, "IDIScape document vectors", "integer")
+    
+    label_fname = base_fname + "_labels.txt"
+    log.info("saving labels to " + label_fname)
+    open(label_fname, "w", "utf8").write(u"\n".join(authors))    
     
 
 if __name__ == "__main__":
     from sys import argv
     
-    log.basicConfig(level=log.DEBUG)
+    log.basicConfig(level=log.INFO)
     make_author_vectors(*argv[1:])
