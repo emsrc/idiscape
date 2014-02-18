@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+	<title>About IDISCAPE</title>
+	<meta name="description" content="Explanation of how IDIScape constructs word clouds">
+	<link href="minimal.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+	<header>
+		<div class="logo">About IDIScape</div>
+	</header>
+        
+        <div class="row">
+        
+            <h2>How does this work?</h2>
+
+            <p>
+            <ol>
+                <li>Info about the scientific staff (name, position, group and picture) is scraped from the IDI webpages for <a href="http://www.idi.ntnu.no/people/faculty.php">faculty</a>, <a href="http://www.idi.ntnu.no/people/phd_students.php">PhD candidates</a> and <a href="http://www.idi.ntnu.no/people/researchers.php">researchers</a> using <a href="http://scrapy.org">Scrapy</a>.</li>
+                <li><a href="http://citeseer.ist.psu.edu/index">CiteSeerX</a> is searched for publications by any of these authors, scraping their download links from the search results. For example, here are <a href="http://citeseer.ist.psu.edu/search?q=author%3A%28Erwin+Marsi%29&submit=Search&sort=rlv&t=doc">mine</a></li>
+                <li>Publications are downloaded in PDF format.</li>
+                <li>PDF files are converted to plain text using <a href="http://poppler.freedesktop.org">Poppler</a>, filtering out malformed and very long documents, as well as those not containing the author name.</li>
+                <li>Text is tokenised, part-of-speech tagged and lemmatised using <a href="http://nlp.stanford.edu/software/corenlp.shtml">Stanford CoreNLP tools</a>.</li>
+                <li>Text is vectorised (“bag-of-n-grams” representation) using <a href="http://scikit-learn.org/">scikit-learn</a>, resulting in one feature vector per document. This includes involves various methods of filtering out noise. Feature vectors for authors are constructed by summing the document vectors of their publications.</li>
+                <li>Word clouds are generated from the 200 most frequent n-grams using the <a href="https://github.com/amueller/word_cloud">word_cloud</a> package. See also this <a href="http://peekaboo-vision.blogspot.no/2012/11/a-wordcloud-in-python.html">blog entry</a>.</li>
+                <li>This static website is automatically generated from teh combined info and images.</li>
+            </ol>
+            </p>
+            
+            <h2>What is the point of this?</h2>
+
+            <p>Since I’ve started working on text mining of scientific publications in a new project called OCEAN-CERTAIN, I thought this would be a good exercise to gain some experience with the practical issues, primarily crawling and scraping of webpages. I also think that combinations of text mining and visualisation can help us, to some extent, to understand the research interests and expertise of our colleagues. “IDIScape” therefore hints at some some vague idea of visualising the local research landscape.</p>
+            
+            <h2>Why is my name missing?</h2>
+            
+            <p>            
+            There may be several reasons: 
+            <ul>
+                <li>Your publications are not indexed by CiteSeerX. CiteSeerX mostly covers open access, proceedings or otherwise free to download publications. Journals are not covered very well. So if most of your publications are journal articles, you may be underrepresented or not represented at all in CiteSeerX.</li>
+                <li>Your publications cannot be found by searching CiteSeerX with the first and last part of your full name.</li>
+                <li>The download links for your publications are all dead.</li>
+                <li>Your publications are not available in PDF format from CiteSeerX, but in (zipped) postscript, html or some other format.</li>
+                <li>Publications longer than 50 pages are skipped.</li>
+                <li>Is some cases, converting a PDF publication to plain text results in complete garbage and is therefore ignored.</a>
+            </ul>
+            </p>
+            
+            <h2>Why CiteSeerX?</h2>
+            
+            <p>CiteSeerX focuses on computer science, offers links to cached PDFs and it is (presumably) not that strict with regard to scraping and automatic downloads. Google, in contrast, is very good at detecting “abuse”, so I’m reluctant to use Google Scholar for this purpose, as I might get banned. The same goes for other search services such as Scopus.</p>
+            
+
+            <h2>What are these weird words doing in my word cloud?</h2>
+
+            <p>CiteSeerX does not have good facilities for constraining searches on author name. For example there are quite a lot of publications with a "Richard X”, "Y Blake" or "Blake Z" among the authors. As a result, word clouds may get poluted with n-grams from publications by other authors with similar names. In general, reliably extracting text and structural information -- such as authors, titles and abstracts -- from a PDF file is a hard problem that is unlikely to be solved perfectly any time soon.</p>
+            
+            <h2>Does this scale?</h2>
+            
+            <p>To some extent. It takes under two hours on my rather old MacBook (2.66 GHz Intel Core 2 Due, 8GB). Initially about 2500 publications are downloaded. In the end, about a 1000 document vectors remain. Downloading seems to be the slowest step.</p>
+
+            <h2>Where is the source code?</h2>
+
+            <p>Please note that this is just a proof on concept implementation. In other words, it is essentially a bunch of command line tools, Python scripts and a lousy Make file  :-) That said, you can find the code on <a href="https://github.com/emsrc/idiscape">Github</a>. I'm sure most things can be improved.</p>
+            
+            <h2>Where is the data?</h2>
+            
+            <p>Document and author vectors are available <a href="">here</a> if anyone is interested. </p>
+            
+            <h2>Can I use my own word cloud image?</h2>
+            
+            <p>Sure, go ahead. Print it on your coffee mug.</p>
+            
+            
+         </div><!-- row -->
+
+	<footer>
+			&copy;2014 <a href="http://www.idi.ntnu.no/people/emarsi">Erwin Marsi</a>
+	</footer><!-- footer -->
+</div>
+</body>
+</html>

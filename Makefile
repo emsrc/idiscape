@@ -203,18 +203,16 @@ clean_cloud:
 
 WEB_DIR=webpage
 HTML_DIR=$(WEB_DIR)/html
-INDEX=$(WEB_DIR)/index.htm
-STYLE=$(WEB_DIR)/style.css
+BUILD_DIR=$(WEB_DIR)/build
 
 
 webpage:
 	$(WEB_DIR)/make_webpage.py \
 		$(IDI_OUTPUT) \
-		$(INDEX) \
-		$(STYLE) \
+		$(HTML_DIR) \
 		$(IMG_DIR) \
 		$(CLOUD_IMG_DIR) \
-		$(HTML_DIR)
+		$(BUILD_DIR)
 		
 clean_webpage:
-	rm -vrf $(HTML_DIR)
+	rm -vrf $(BUILD_DIR)
