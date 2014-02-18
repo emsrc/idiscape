@@ -6,12 +6,12 @@
 #
 #≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈
 
-.PHONY: crawl_idi crawl_citeseer download extract annot vector cloud
+.PHONY: crawl_idi crawl_citeseer download extract annot vector cloud webpage
 
-all: crawl_idi crawl_citeseer download extract annot vector cloud
+all: crawl_idi crawl_citeseer download extract annot vector cloud webpage
 
 clean: clean_crawl_idi clean_citeseer clean_download clean_extract \
-clean_annot clean_vector
+clean_annot clean_vector clean_webpage
 
 
 #------------------------------------------------------------------------------
@@ -195,3 +195,26 @@ clean_cloud:
 	rm -frv $(CLOUD_IMG_DIR) $(CLOUD_LOG)
 
 
+#------------------------------------------------------------------------------
+# STEP 8: Make webpage
+#------------------------------------------------------------------------------
+#
+# Create webpage is self-contained dir, symlinking photos and cloud images
+
+WEB_DIR=webpage
+HTML_DIR=$(WEB_DIR)/html
+INDEX=$(WEB_DIR)/index.htm
+STYLE=$(WEB_DIR)/style.css
+
+
+webpage:
+	$(WEB_DIR)/make_webpage.py \
+		$(IDI_OUTPUT) \
+		$(INDEX) \
+		$(STYLE) \
+		$(IMG_DIR) \
+		$(CLOUD_IMG_DIR) \
+		$(HTML_DIR)
+		
+clean_webpage:
+	rm -vrf $(HTML_DIR)
