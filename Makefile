@@ -6,12 +6,12 @@
 #
 #≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈
 
-.PHONY: crawl_idi crawl_citeseer download extract annot vector cloud
+.PHONY: crawl_idi crawl_citeseer download extract annot vector cloud webpage
 
-all: crawl_idi crawl_citeseer download extract annot vector cloud
+all: crawl_idi crawl_citeseer download extract annot vector cloud webpage
 
 clean: clean_crawl_idi clean_citeseer clean_download clean_extract \
-clean_annot clean_vector
+clean_annot clean_vector clean_webpage
 
 
 #------------------------------------------------------------------------------
@@ -171,7 +171,8 @@ vector:
 		|tee $(VECTOR_LOG)
 
 clean_vector:
-	rm -vf $(DOC_VECS) $(AUTH_VECS) $(VECTOR_LOG)
+	rm -vf $(DOC_VECS) $(AUTH_VECS) $(VECTOR_LOG) \
+		$(VECTOR_DIR)\*.mtx $(VECTOR_DIR)\*.txt
 
 
 #------------------------------------------------------------------------------
@@ -187,7 +188,10 @@ CLOUD_LOG=$(CLOUD_DIR)/cloud.log
 
 cloud:
 	mkdir -p $(CLOUD_IMG_DIR)
-	$(CLOUD_DIR)/make_clouds.py $(AUTH_VECS) $(CLOUD_IMG_DIR) \
+	$(CLOUD_DIR)/make_clouds.py \
+		$(AUTH_VECS) \
+		$(IDI_OUTPUT) \
+		$(CLOUD_IMG_DIR) \
 		|tee $(CLOUD_LOG)
 
 
@@ -195,3 +199,38 @@ clean_cloud:
 	rm -frv $(CLOUD_IMG_DIR) $(CLOUD_LOG)
 
 
+#------------------------------------------------------------------------------
+# STEP 8: Make webpage
+#------------------------------------------------------------------------------
+#
+# Create webpage is self-contained dir, symlinking photos and cloud images
+
+WEB_DIR=webpage
+HTML_DIR=$(WEB_DIR)/html
+BUILD_DIR=$(WEB_DIR)/build
+
+
+webpage:
+	$(WEB_DIR)/make_webpage.py \
+		$(IDI_OUTPUT) \
+		$(HTML_DIR) \
+		$(IMG_DIR) \
+		$(CLOUD_IMG_DIR) \
+		$(BUILD_DIR)
+		
+clean_webpage:
+	rm -vrf $(BUILD_DIR)
+	
+	
+
+#------------------------------------------------------------------------------
+# Pack data
+#------------------------------------------------------------------------------
+
+# Pack matrices, labels and features. Move tarball to webpage. 
+
+TARBALL=idiscape-data-v1.tar.bz2
+
+pack:
+	tar cvyf $(TARBALL) $(VECTOR_DIR)/*.mtx $(VECTOR_DIR)/*.txt
+	mv -v $(TARBALL) $(BUILD_DIR)
