@@ -107,9 +107,11 @@ def make_webpage(crawl_fname, html_dir, photo_dir, cloud_dir, build_dir,
 
     for item in tree.findall("//item"):
         url, position, group, name, img = [e.text for e in item]
-        cloud_fname = join(cloud_subdir, name + u".png")
-        
-        if exists(join(build_dir, cloud_fname)):  
+        ascii_name = splitext(basename(img))[0]
+        cloud_htm = ascii_name + ".htm"
+        cloud_png = join(cloud_subdir, ascii_name + ".png")
+                
+        if exists(join(build_dir, cloud_png)):  
             # generate menu entry
             html = author_template.format(
                 style=style_fname,
@@ -118,15 +120,14 @@ def make_webpage(crawl_fname, html_dir, photo_dir, cloud_dir, build_dir,
                 url=url,
                 position=position,
                 group=group,
-                cloud=join(name + ".htm")
-            )
+                cloud=cloud_htm)
             authors.append((name, html))
             
             # generate html file with word cloud image
-            with open(join(build_dir, join(name + ".htm")), "w", "utf8") as f:
+            with open(join(build_dir, cloud_htm), "w", "utf8") as f:
                 html = cloud_template.format(name=name,
                                              style=style_fname, 
-                                             cloud_href=cloud_fname)
+                                             cloud_href=cloud_png)
                 f.write(html)
         
     authors.sort()

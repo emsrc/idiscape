@@ -188,7 +188,10 @@ CLOUD_LOG=$(CLOUD_DIR)/cloud.log
 
 cloud:
 	mkdir -p $(CLOUD_IMG_DIR)
-	$(CLOUD_DIR)/make_clouds.py $(AUTH_VECS) $(CLOUD_IMG_DIR) \
+	$(CLOUD_DIR)/make_clouds.py \
+		$(AUTH_VECS) \
+		$(IDI_OUTPUT) \
+		$(CLOUD_IMG_DIR) \
 		|tee $(CLOUD_LOG)
 
 
