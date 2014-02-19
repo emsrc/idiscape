@@ -25,13 +25,13 @@
             <p>
 	    Word clouds were built off-line as follows: 
             <ol>
-                <li>Info about the scientific staff (name, position, group and picture) is scraped from the IDI webpages for <a href="http://www.idi.ntnu.no/people/faculty.php">faculty</a>, <a href="http://www.idi.ntnu.no/people/phd_students.php">PhD candidates</a> and <a href="http://www.idi.ntnu.no/people/researchers.php">researchers</a> using <a href="http://scrapy.org">Scrapy</a>.</li>
-                <li><a href="http://citeseer.ist.psu.edu/index">CiteSeerX</a> is searched for publications by any of these authors, scraping their download links from the search results. For example, here are <a href="http://citeseer.ist.psu.edu/search?q=author%3A%28Erwin+Marsi%29&submit=Search&sort=rlv&t=doc">mine</a></li>
+                <li>Info about the scientific staff (name, position, group and picture) is scraped from the IDI webpages for <a href="http://www.idi.ntnu.no/people/faculty.php" target="_top">faculty</a>, <a href="http://www.idi.ntnu.no/people/phd_students.php" target="_top">PhD candidates</a> and <a href="http://www.idi.ntnu.no/people/researchers.php" target="_top">researchers</a> using <a href="http://scrapy.org" target="_top">Scrapy</a>.</li>
+                <li><a href="http://citeseer.ist.psu.edu/index" target="_top">CiteSeerX</a> is searched for publications by any of these authors, scraping their download links from the search results. For example, here are <a href="http://citeseer.ist.psu.edu/search?q=author%3A%28Erwin+Marsi%29&submit=Search&sort=rlv&t=doc" target="_top">mine</a></li>
                 <li>Publications are downloaded in PDF format.</li>
-                <li>PDF files are converted to plain text using <a href="http://poppler.freedesktop.org">Poppler</a>, filtering out malformed and very long documents, as well as those not containing the author name.</li>
-                <li>Text is tokenised, part-of-speech tagged and lemmatised using <a href="http://nlp.stanford.edu/software/corenlp.shtml">Stanford CoreNLP tools</a>.</li>
-                <li>Text is vectorised (“bag-of-n-grams” representation) using <a href="http://scikit-learn.org/">scikit-learn</a>, resulting in one feature vector per document. This includes involves various methods of filtering out noise. Feature vectors for authors are constructed by summing the document vectors of their publications.</li>
-                <li>Word clouds are generated from the 200 most frequent n-grams using the <a href="https://github.com/amueller/word_cloud">word_cloud</a> package. See also this <a href="http://peekaboo-vision.blogspot.no/2012/11/a-wordcloud-in-python.html">blog entry</a>.</li>
+                <li>PDF files are converted to plain text using <a href="http://poppler.freedesktop.org" target="_top">Poppler</a>, filtering out malformed and very long documents, as well as those not containing the author name.</li>
+                <li>Text is tokenised, part-of-speech tagged and lemmatised using <a href="http://nlp.stanford.edu/software/corenlp.shtml" target="_top">Stanford CoreNLP tools</a>.</li>
+                <li>Text is vectorised (“bag-of-n-grams” representation) using <a href="http://scikit-learn.org/" target="_top">scikit-learn</a>, resulting in one feature vector per document. This includes involves various methods of filtering out noise. Feature vectors for authors are constructed by summing the document vectors of their publications.</li>
+                <li>Word clouds are generated from the 200 most frequent n-grams using the <a href="https://github.com/amueller/word_cloud" target="_top">word_cloud</a> package. See also this <a href="http://peekaboo-vision.blogspot.no/2012/11/a-wordcloud-in-python.html" target="_top">blog entry</a>.</li>
                 <li>This static website is automatically generated from teh combined info and images.</li>
             </ol>
             </p>
@@ -61,7 +61,7 @@
 
             <h2>What are these weird words doing in my word cloud?</h2>
 
-            <p>CiteSeerX does not have good facilities for constraining searches on author name. For example there are quite a lot of publications with a "Richard X”, "Y Blake" or "Blake Z" among the authors. As a result, word clouds may get poluted with n-grams from publications by other authors with similar names. In general, reliably extracting text and structural information -- such as authors, titles and abstracts -- from a PDF file is a hard problem that is unlikely to be solved perfectly any time soon.</p>
+            <p>CiteSeerX does not have good facilities for constraining searches on author name. For example there are quite a lot of publications with a "Richard X”, "Y Blake" or "Blake Z" among the authors. As a result, word clouds may get polluted with n-grams from publications by other authors with similar names. In general, reliably extracting text and structural information -- such as authors, titles and abstracts -- from a PDF file is a hard problem that is unlikely to be solved perfectly any time soon.</p>
             
             <h2>Does this scale?</h2>
             
@@ -69,11 +69,11 @@
 
             <h2>Where is the source code?</h2>
 
-            <p>Please note that this is just a proof on concept implementation. In other words, it is essentially a bunch of command line tools, Python scripts and a lousy Make file  :-) That said, you can find the code on <a href="https://github.com/emsrc/idiscape">Github</a>. I'm sure there are bugs and most things can be improved. No documenation, I'm afraid, but feel free to ask <a href="http://www.idi.ntnu.no/people/emarsi">me</a>.</p>
+            <p>Please note that this is just a proof on concept implementation. In other words, it is essentially a bunch of command line tools, Python scripts and a lousy Make file  :-) That said, you can find the code on <a href="https://github.com/emsrc/idiscape" target="_top">Github</a>. I'm sure there are bugs and most things can be improved. No documenation, I'm afraid, but feel free to ask <a href="http://www.idi.ntnu.no/people/emarsi" target="_top">me</a>.</p>
             
             <h2>Where is the data?</h2>
             
-            <p>Document and author vectors are available here: <a href="idiscape-data-v1.tar.bz2">idiscape-data-v1.tar.bz2</a> (6.9M). Sparse matrices are in <a href="http://math.nist.gov/MatrixMarket/formats.html">Matrix Market format</a>. Feature names and vector labels are in utf-8 text files. No documenation, but you can always ask <a href="http://www.idi.ntnu.no/people/emarsi">me</a>. Please let me know if you (plan to) use this for something.</p>
+            <p>Document and author vectors are available here: <a href="idiscape-data-v1.tar.bz2">idiscape-data-v1.tar.bz2</a> (6.9M). Sparse matrices are in <a href="http://math.nist.gov/MatrixMarket/formats.html" target="_top">Matrix Market format</a>. Feature names and vector labels are in utf-8 text files. No documenation, but you can always ask <a href="http://www.idi.ntnu.no/people/emarsi" target="_top">me</a>. Please let me know if you (plan to) use this for something.</p>
             
             <h2>Can I use my own word cloud image?</h2>
             
